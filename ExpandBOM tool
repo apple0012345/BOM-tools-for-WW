@@ -1,0 +1,26 @@
+from google.colab import files
+import pandas as pd
+
+# 上傳檔案
+uploaded = files.upload()
+
+# 讀取上傳的Excel檔案
+bom = pd.read_excel(list(uploaded.keys())[0], engine='openpyxl')
+
+# 用","拆BOM
+locations = bom["Reference"].str.split(",", expand=True)
+
+# Reshape the locations data so that it's in long format
+locations = locations.stack().reset_index(level=1, drop=True).to_frame("Reference")
+
+# Merge the locations data back into the original BOM data
+bom_expanded = bom.drop("Reference", axis=1).join(locations)
+
+# 輸出成Excel檔
+bom_expanded.to_excel("expanded_bom.xlsx", index=False)
+
+# 下載
+files.download("expanded_bom.xlsx")
+
+# 输出处理后的数据
+bom.tail(5)
