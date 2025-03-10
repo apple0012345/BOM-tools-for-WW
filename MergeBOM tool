@@ -1,0 +1,32 @@
+# MergeBOM tool 2.0
+
+from google.colab import files
+import pandas as pd
+
+# 上傳檔案
+uploaded = files.upload()
+
+# 讀取 Excel 檔案
+df = pd.read_excel(next(iter(uploaded.values())))
+
+# Function to combine rows with the same Part Number, compute Quantity based on Reference count, and merge References
+def combine_bom_rows(dataframe):
+    def count_references(reference):
+        return reference.count(',') + 1 if pd.notna(reference) else 1
+    
+    grouped = dataframe.groupby('Part Number').agg({'Reference': ','.join}).reset_index()
+    grouped['Quantity'] = grouped['Reference'].apply(count_references)
+    
+    return grouped
+
+# 合併 BOM
+merged_bom = combine_bom_rows(df)
+
+# 存檔
+merged_bom.to_excel('merged_bom.xlsx', index=False)
+
+# 下載檔案
+files.download('merged_bom.xlsx')
+
+# print
+merged_bom.head()
