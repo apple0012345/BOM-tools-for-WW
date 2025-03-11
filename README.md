@@ -1,6 +1,6 @@
 **BOM Tools for WW**
 
-所有 BOM 工具的功能僅可在 Google Colab 上執行。
+所有 BOM 工具的功能僅可在 **Google Colab** 上執行。
 
 ExpandBOM Tool 1.0
 
